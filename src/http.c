@@ -30,6 +30,7 @@ struct HttpRequest
   char             *uri;
   char             *path_info;
   char             *query_string;
+  char             *ip_src;
 };
 
 struct HttpResponse 
@@ -170,6 +171,11 @@ http_request_get_query_string(HttpRequest *req)
   return req->query_string;
 }
 
+char*
+http_request_get_ip_src(HttpRequest *req)
+{
+  return req->ip_src;
+}
 
 /*
  * This routine handles a single HTTP request which is coming in on
@@ -182,7 +188,7 @@ http_request_new(void)
   char              *token, *content_type, *post_data, *z;
   int                i, len;
   struct sockaddr_in remoteName;
-  int                size = sizeof(struct sockaddr_in);
+  socklen_t          size = sizeof(struct sockaddr_in);
   char               request_line[2048];     /* A single line of input. */
   HttpRequest       *req = NULL;
 
@@ -225,8 +231,10 @@ http_request_new(void)
   if (&token[i])
     req->query_string = strdup(&token[i]);
 
-  if( getpeername(fileno(stdin), (struct sockaddr*)&remoteName, &size) >=0 )
+  if( getpeername(fileno(stdin), (struct sockaddr*)&remoteName, &size) >=0 ) {
     putenv(util_mprintf("REMOTE_ADDR=%s", inet_ntoa(remoteName.sin_addr)));
+	req->ip_src = inet_ntoa(remoteName.sin_addr);
+  }
 
   /* Get all the optional fields that follow the first line.
   */
@@ -442,6 +450,40 @@ http_response_send(HttpResponse *res)
 }
 
 /*
+** SIGINT handler.
+*/
+
+void  
+sigint(int sig)
+{
+  printf("\nDidiwiki stopped.\n");
+  syslog(LOG_LOCAL0|LOG_INFO, "Didiwiki stopped.\n");
+
+  (void)signal(SIGINT, SIG_DFL);
+  (void)kill(getpid(), SIGINT);
+
+  /* NOTREACHED */
+  exit(1);
+}
+
+/*
+** SIGTERM handler
+*/
+void
+sigterm(int sig)
+{
+  printf("\nDidiwiki stopped.\n");
+  syslog(LOG_LOCAL0|LOG_INFO, "Didiwiki stopped.\n");
+
+  (void)signal(SIGTERM, SIG_DFL);
+  (void)kill(getpid(), SIGTERM);
+
+  /* NOTREACHED */
+  exit(1);
+
+}
+
+/*
 ** Maximum number of child processes that we can have running
 ** at one time before we start slowing things down.
 */
@@ -451,12 +493,12 @@ http_response_send(HttpResponse *res)
 ** Implement an HTTP server daemon.
 */
 HttpRequest*
-http_server(int iPort)
+http_server(struct in_addr address, int iPort)
 {
   int                listener;      /* The server socket */
   int                connection;    /* A socket for each connection */
   fd_set             readfds;       /* Set of file descriptors for select() */
-  int                lenaddr;       /* Length of the inaddr structure */
+  socklen_t          lenaddr;       /* Length of the inaddr structure */
   int                child;         /* PID of the child process */
   int                nchildren = 0; /* Number of child processes */
   struct timeval     delay;         /* How long to wait inside select() */
@@ -465,9 +507,15 @@ http_server(int iPort)
   int                n = 0;
   char               url_prefix[256];
 
+  /* catch SIGINT */
+  (void) signal(SIGINT, sigint);
+
+  /* catch SIGTERM */
+  (void) signal(SIGTERM, sigterm);
+
   memset(&inaddr, 0, sizeof(inaddr));
   inaddr.sin_family = AF_INET;
-  inaddr.sin_addr.s_addr = INADDR_ANY;
+  inaddr.sin_addr.s_addr = address.s_addr;
   inaddr.sin_port = htons(iPort);
   listener = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -485,7 +533,7 @@ http_server(int iPort)
 
   while (n < 10)
     {
-      fprintf(stderr,"Attempting to use port %d .. ", iPort+n);
+      fprintf(stderr,"Attempting to bind to %s:%i .. ", inet_ntoa(address), iPort);
 
       inaddr.sin_port = htons(iPort + n);
 
@@ -506,10 +554,14 @@ http_server(int iPort)
       exit(1);
     }
 
-  fprintf(stderr,"DidiWiki Started. Please point your browser at http://localhost:%i\n", iPort+n);
+  fprintf(stderr,"DidiWiki Started. Please point your browser at %s:%i\n", inet_ntoa(address), iPort);
+
+  /* log starting information */
+  openlog("didiwiki", 0, 0);
+  syslog(LOG_LOCAL0|LOG_INFO, "started with PID %d", getpid());
 
   /* Set DIDIWIKI_URL_PREFIX if not already set - rss uses it */
-  snprintf(url_prefix, 256, "http://localhost:%i/", iPort+n);
+  snprintf(url_prefix, 256, "%s:%i/", inet_ntoa(address), iPort+n);
   setenv("DIDIWIKI_URL_PREFIX", url_prefix , 0);
 
   listen(listener,10);

@@ -17,6 +17,11 @@
 #ifndef _HAVE_WIKI_TEXT_HEADER
 #define _HAVE_WIKI_TEXT_HEADER
 
+#define EDITHEADER                                                       \
+                                                                         \
+" ( <a href='?edit' title='Edit this wiki page contents. [alt-j]'"       \
+" accesskey='j'>Edit</a> | "                                             \
+"<a href='?delete' title='Delete page. [alt-d]' accesskey='d'>Delete</a>) "
 
 #define PAGEHEADER                                                       \
                                                                          \
@@ -27,6 +32,7 @@
 "<td align='left' ><strong>%s</strong> %s</td>\n"         \
 "<td align='right' >\n"                                    \
 "<a href='WikiHome' title='Visit Wiki home page. [alt-z]' accesskey='z'>Home</a> |\n"  \
+"<a href='Index' title='List all pages in the wiki. [alt-i]' accesskey='i' >Index</a> | \n"  \
 "<a href='Changes' title='List recent changes in the wiki. [alt-r]' accesskey='r' >Changes</a> | \n"                                    \
 "<a href='Create' title='Create a new wiki page by title. [alt-c]' accesskey='c'>New</a> | \n"                                         \
 "<a href='WikiHelp' title='Get help on wiki usage and formatting.'>Help</a> |\n"                                       \
@@ -53,9 +59,11 @@
 
 #define EDITFORM                                                         \
                                                                          \
-"<form method=POST action='%s' name='editform'>\n"                        \
+"<form method=POST action='%s?edit' name='editform'>\n"                        \
 "<textarea name='wikitext' rows='20' cols='80' wrap='virtual'>%s</textarea>\n" \
-"<p><input type='submit' value='Save' title='[alt-k]' accesskey='k'></p>\n"                            \
+"<p><input type='submit' name='save' value='Save' title='[alt-k]' accesskey='k'>" \
+"<input type='submit' name='preview' value='Preview' title='[alt-p]' accesskey='p'>" \
+"<input type='submit' name='cancel' value='Cancel' title='[alt-c]' accesskey='c'></p>\n"                            \
 "</form>\n"             \
 "<script language='JavaScript'>\n"   \
 "<!--\n"                             \
@@ -66,17 +74,30 @@
 "</script>\n"
 
 
+#define EDITPREVIEW                                                      \
+                                                                         \
+"<div id=\"header\"><strong>Preview:</strong></div>\n"
+
+
+#define DELETEFORM                                                       \
+                                                                         \
+"<form method=POST action='%s?delete' name='deleteform'>\n"              \
+"Are you really sure you want to delete the page <strong>%s</strong>?\n" \
+"<p><input type='submit' name='confirm' Value='OK'>\n"                   \
+"<input type='submit' name='cancel' value='Cancel'></form>"
+
+
 #define HOMETEXT ""                                                      \
                                                                          \
 "==Welcome to !DidiWiki\n"                                               \
 "/!DidiWiki / is a small and simple [http://en.wikipedia.org/wiki/Wiki WikiWikiWeb]\n" \
-"Implementaion. Its intended for personal note taking, Todo lists and any other uses you can think of.\n"                               \
+"implementation. It's intended for personal note-taking, \"to do\" lists, and any other uses you can think of.\n"                               \
 "\n"                                                                        \
 "To learn more about what a [http://www.c2.com/cgi/wiki?WikiWikiWeb WikiWikiWeb] is, read about [http://www.c2.com/cgi/wiki?WhyWikiWorks WhyWikiWorks] and the [http://www.c2.com/cgi/wiki?WikiNature WikiNature]. Also, consult the [http://www.c2.com/cgi/wiki?WikiWikiWebFaq WikiWikiWebFaq].\n"                      \
 "\n"                                                                        \
-"For an example how a !WikiWiki entry looks in text form you can [?edit edit] this page. Also see WikiHelp for infomation on usage and formatting rules. Use The WikiSandbox to experiment.\n" \
+"For an example of how a !DidiWiki entry looks in text form you can [?edit edit] this page. Also see WikiHelp for infomation on usage and formatting rules. Use The WikiSandbox to experiment.\n" \
 "\n"                                                                        \
-"/!DidiWiki / is written by [mailto://mallum@o-hand.com Matthew Allum] in C and is free software, released under the [http://www.gnu.org GNU] [http://www.gnu.org/copyleft/gpl.html GPL]. It uses a formatting style similar to that of [http://www.kwiki.org kwiki] and some webserver code from [http://www.cvstrac.org cvstrac]\n"
+"/!DidiWiki / is written by [mailto://mallum@o-hand.com Matthew Allum] in C and is free software, released under the [http://www.gnu.org GNU] [http://www.gnu.org/copyleft/gpl.html GPL]. It uses a formatting style similar to that of [http://www.kwiki.org kwiki] and some webserver code from [http://www.cvstrac.org cvstrac].\n"
 
 
 #define HELPTEXT ""                                                      \
@@ -84,7 +105,9 @@
 "=Quick Guide \n"                                                    \
 "Top toolbar usage\n"                                                    \
 "* [?edit Edit] Allows you to edit pages ( see below for rules )\n"       \
+"* [?delete Delete] Allows you to delete pages\n"                        \
 "* [WikiHome Home] Takes you to the wiki front page\n"                \
+"* [Index Index] List all the pages in the wiki\n"                \
 "* [Changes Changes] Lists the pages changed by date\n"                  \
 "* [Create New] Creates a new wiki page by title\n"                      \
 "* [WikiHelp Help] Takes you to this help page\n"                            \
@@ -108,7 +131,7 @@
 " ---- Horizonal line\n"                                                 \
 "----\n"                                                                 \
 "\n"                                                                     \
-"Paragraphs are seperated by an empty line\n"                            \
+"Paragraphs are separated by an empty line\n"                            \
 "\n"                                                                     \
 "Like this. Another paragraph.\n"                                        \
 "\n"                                                                     \

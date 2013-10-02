@@ -1,7 +1,7 @@
 AC_PREREQ(2.59)
-AC_INIT(didiwiki, 0.6-cvs, [mallum@handhelds.org])
+AC_INIT(didiwiki, 0.7, [amigo@ibiblio.org])
 AC_CONFIG_SRCDIR([src/util.c])
-AC_CONFIG_HEADER([config.h])
+AM_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE()
 

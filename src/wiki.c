@@ -245,7 +245,7 @@ wiki_print_data_as_html(HttpResponse *res, char *raw_page_data)
       if (pre_on && !isspace(*line) && *line != '\0')
 	{
 	  /* close any preformatting if already on*/
-	  http_response_printf(res, "\n</pre>\n") ;
+	  http_response_printf(res, "</pre>\n") ;
 	  pre_on = 0;
 	}
 
@@ -551,14 +551,17 @@ wiki_print_data_as_html(HttpResponse *res, char *raw_page_data)
 
 }
 
-int 
+int
 wiki_redirect(HttpResponse *res, char *location)
 {
-  int   header_len = strlen(location) + 14; 
+  char *location_enc = util_httpize(location);
+  
+  int   header_len = strlen(location_enc) + 14; 
   char *header = alloca(sizeof(char)*header_len);
 
-  snprintf(header, header_len, "Location: %s\r\n", location);
-
+  snprintf(header, header_len, "Location: %s\r\n", location_enc);
+  free(location_enc);
+  
   http_response_append_header(res, header);
   http_response_printf(res, "<html>\n<p>Redirect to %s</p>\n</html>\n", 
 		       location);
@@ -591,17 +594,46 @@ wiki_show_page(HttpResponse *res, char *wikitext, char *page)
 }
 
 void
-wiki_show_edit_page(HttpResponse *res, char *wikitext, char *page)
+wiki_show_edit_page(HttpResponse *res, char *wikitext, char *page,
+		    int preview)
 {
+
   wiki_show_header(res, page, FALSE);
 
   if (wikitext == NULL) wikitext = "";
   http_response_printf(res, EDITFORM, page, wikitext);
-		       
+
+  if (preview)
+  {
+    char *html_clean_wikitext;
+
+    http_response_printf(res, EDITPREVIEW);
+    http_response_printf_alloc_buffer(res, strlen(wikitext)*2);
+
+    html_clean_wikitext = util_htmlize(wikitext, strlen(wikitext));
+
+    wiki_print_data_as_html(res, html_clean_wikitext);
+  }
+
   wiki_show_footer(res);
 
   http_response_send(res);
   exit(0);
+}
+
+void
+wiki_show_delete_confirm_page(HttpResponse *res, char *page)
+{
+  wiki_show_header(res, "Delete Page", FALSE);
+
+  http_response_printf(res, DELETEFORM, page, page);
+
+  wiki_show_footer(res);
+
+  http_response_send(res);
+
+  exit(0);
+
 }
 
 void
@@ -708,6 +740,9 @@ wiki_show_changes_page(HttpResponse *res)
 			   datebuf);
     }
 
+  http_response_printf(res, "<p>Wiki changes are also available as a "
+					   "<a href='ChangesRss'>RSS</a> feed.\n");
+
   wiki_show_footer(res);
   http_response_send(res);
   exit(0);
@@ -723,7 +758,9 @@ wiki_show_changes_page_rss(HttpResponse *res)
 
   pages = wiki_get_pages(&n_pages, NULL);
 
-  http_response_printf(res, "<?xml version=\"1.0\"encoding=\"ISO-8859-1\"?>\n"
+  http_response_set_content_type(res, "application/xhtml+xml");
+
+  http_response_printf(res, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
                             "<rss version=\"2.0\">\n"
 		            "<channel><title>DidiWiki Changes feed</title>\n");
 
@@ -759,6 +796,30 @@ wiki_show_changes_page_rss(HttpResponse *res)
   exit(0);
 }
 
+void
+wiki_show_index_page(HttpResponse *res)
+{
+	struct dirent **namelist;
+	int		n;
+	wiki_show_header(res, "Index", FALSE);
+	n = scandir(".", &namelist, 0, (void *)changes_compar);
+
+	http_response_printf(res, "<ul>\n");
+	while(n--)
+	{
+		if ((namelist[n]->d_name)[0] == '.'
+				|| !strcmp(namelist[n]->d_name, "styles.css"))
+			goto cleanup;
+		http_response_printf(res, "<li><a href='%s'>%s</a></li>\n", namelist[n]->d_name, namelist[n]->d_name);
+cleanup:
+		free(namelist[n]);
+	}
+	http_response_printf(res, "</ul>\n");
+	free(namelist);
+	wiki_show_footer(res);
+	http_response_send(res);
+	exit(0);
+}
 
 void
 wiki_show_search_results_page(HttpResponse *res, char *expr)
@@ -836,8 +897,8 @@ wiki_show_header(HttpResponse *res, char *page_title, int want_edit)
 		       "<body>\n", page_title
 		       );
 
-  http_response_printf(res, PAGEHEADER, page_title, 
-		       (want_edit) ? " ( <a href='?edit' title='Edit this wiki page contents. [alt-j]' accesskey='j'>Edit</a> ) " : "" );     
+  http_response_printf(res, PAGEHEADER, page_title,
+		       (want_edit) ? EDITHEADER : "" );
 }
 
 void
@@ -879,7 +940,9 @@ wiki_handle_rest_call(HttpRequest  *req,
 	  if( ( (wikitext = http_request_param_get(req, "text")) != NULL)
 	      && ( (page = http_request_param_get(req, "page")) != NULL))
 	    {
-	      file_write(page, wikitext);	      
+	      file_write(page, wikitext);
+		  /* log modified page name and IP address */
+		  syslog(LOG_LOCAL0|LOG_INFO, "page %s modified from %s", page ,http_request_get_ip_src(req));
 	      http_response_printf(res, "success");
 	      http_response_send(res);
 	      return;
@@ -957,7 +1020,7 @@ wiki_handle_http_request(HttpRequest *req)
   HttpResponse *res      = http_response_new(req);
   char         *page     = http_request_get_path_info(req); 
   char         *command  = http_request_get_query_string(req); 
-  char         *wikitext = "";
+  char         *wikitext = NULL;
 
   util_dehttpize(page); 	/* remove any encoding on the requested
 				   page name.                           */
@@ -1021,6 +1084,10 @@ wiki_handle_http_request(HttpRequest *req)
     {
       wiki_show_changes_page_rss(res);
     }
+  else if (!strcmp(page, "Index"))
+	{
+	  wiki_show_index_page(res);
+    }
   else if (!strcmp(page, "Search"))
     {
       wiki_show_search_results_page(res, http_request_param_get(req, "expr"));
@@ -1040,64 +1107,99 @@ wiki_handle_http_request(HttpRequest *req)
     }
   else
     {
-      /* TODO: dont blindly write wikitext data to disk */
-      if ( (wikitext = http_request_param_get(req, "wikitext")) != NULL)
-	{
-	  file_write(page, wikitext);	      
-	}
+	  if (access(page, R_OK) == 0) /* page exists */
+	  {
+		  wikitext = file_read(page);
+		  /* log read page name and IP address */
+          syslog(LOG_LOCAL0|LOG_INFO, "page %s viewed from %s", page, http_request_get_ip_src(req));
+	  }
 
-      if (access(page, R_OK) == 0) 	/* page exists */
-	{
-	  wikitext = file_read(page);
-	  
-	  if (!strcmp(command, "edit"))
-	    {
-	      /* print edit page */
-	      wiki_show_edit_page(res, wikitext, page);
-	    }
+	  if (!strcmp(command, "delete"))
+	  {
+		  if (http_request_param_get(req, "confirm"))
+		  {
+			  unlink(page);
+			  wiki_redirect(res, "/");
+		  }
+		  else if (http_request_param_get(req, "cancel"))
+		  {
+			  wiki_redirect(res, page);
+		  }
+		  else
+		  {
+			  wiki_show_delete_confirm_page(res, page);
+		  }
+	  }
+	  else if (!strcmp(command, "edit") || !strcmp(command, "create"))
+	  {
+		  char *newtext = http_request_param_get(req, "wikitext");
+
+		  if (http_request_param_get(req, "save") && newtext)
+		  {
+			  file_write(page, newtext);
+			  /* log modified page name and IP address */
+              syslog(LOG_LOCAL0|LOG_INFO, "page %s modified from %s", page ,http_request_get_ip_src(req));
+			  wiki_redirect(res, page);
+		  }
+		  else if (http_request_param_get(req, "cancel"))
+		  {
+			  wiki_redirect(res, page);
+		  }
+
+		  if (http_request_param_get(req, "preview"))
+		  {
+			  wiki_show_edit_page(res, newtext, page, TRUE);
+		  }
+		  else
+		  {
+			  wiki_show_edit_page(res, wikitext, page, FALSE);
+		  }
+	  }
 	  else
-	    {
-	      wiki_show_page(res, wikitext, page);
-	    }
+	  {
+		  if (wikitext)
+		  {
+			  wiki_show_page(res, wikitext, page);
+		  }
+		  else
+		  {
+			  char buf[1024];
+			  snprintf(buf, sizeof(buf), "%s?create", page);
+			  wiki_redirect(res, buf);
+		  }
+	  }
 	}
-      else
-	{
-	  if (!strcmp(command, "create"))
-	    {
-	      wiki_show_edit_page(res, NULL, page);
-	    }
-	  else
-	    {
-	      char buf[1024];
-	      snprintf(buf, 1024, "%s?create", page);
-	      wiki_redirect(res, buf);
-	    }
-	}
-    }
 
 }
 
 int
-wiki_init(void)
+wiki_init(char *didiwiki_home)
 {
   char datadir[512] = { 0 };
-  struct stat st;
+  struct stat st;  
 
-  if (getenv("DIDIWIKIHOME"))
+  if (didiwiki_home)
     {
-      snprintf(datadir, 512, getenv("DIDIWIKIHOME"));
+      snprintf(datadir, 512, "%s", didiwiki_home);
     }
-  else
+  else 
     {
-      if (getenv("HOME") == NULL)
+      if (getenv("DIDIWIKIHOME"))
 	{
-	  fprintf(stderr, "Unable to get home directory, is HOME set?\n");
-	  exit(1);
+	  snprintf(datadir, 512, "%s", getenv("DIDIWIKIHOME"));
 	}
-
-      snprintf(datadir, 512, "%s/.didiwiki", getenv("HOME"));
-    }  
-     
+      else
+	{
+	  if (getenv("HOME") == NULL)
+	    {
+	      fprintf(stderr, "Unable to get home directory, is HOME set?\n");
+	      exit(1);
+	    }
+	  
+	  snprintf(datadir, 512, "%s/.didiwiki", getenv("HOME"));
+	}
+    }
+  
   /* Check if ~/.didiwiki exists and create if not */
   if (stat(datadir, &st) != 0 )
     {

@@ -75,6 +75,8 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <getopt.h>
+#include <syslog.h>
 
 #endif
 
