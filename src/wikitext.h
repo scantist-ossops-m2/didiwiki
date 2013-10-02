@@ -19,9 +19,26 @@
 
 #define EDITHEADER                                                       \
                                                                          \
-" ( <a href='?edit' title='Edit this wiki page contents. [alt-j]'"       \
-" accesskey='j'>Edit</a> | "                                             \
-"<a href='?delete' title='Delete page. [alt-d]' accesskey='d'>Delete</a>) "
+"<div id='header'>\n"                                                    \
+"<form method='get' action='Search'>\n"                                 \
+"<table border='0' width='100%%'>\n"                                      \
+"<tr>\n"                                                                 \
+"<td align='left' ><strong>%s</strong>" \
+" ( <a href=%s?edit title='Edit this wiki page contents. [alt-j]'"        \
+"accesskey='j'>Edit</a> | "                                             \
+"<a href=%s?delete title='Delete page. [alt-d]' accesskey='d'>Delete</a> ) </td>" \
+"<td align='right' >\n"                                    \
+"<a href='WikiHome' title='Visit Wiki home page. [alt-z]' accesskey='z'>Home</a> |\n"  \
+"<a href='Index' title='List all pages in the wiki. [alt-i]' accesskey='i' >Index</a> | \n"  \
+"<a href='Changes' title='List recent changes in the wiki. [alt-r]' accesskey='r' >Changes</a> | \n"  \
+"<a href='Create' title='Create a new wiki page by title. [alt-c]' accesskey='c'>New</a> | \n"    \
+"<a href='WikiHelp' title='Get help on wiki usage and formatting.'>Help</a>  \n"    \
+"<input type='text' name='expr' size='15' title='Enter text to search for and press return.' /> </td>\n"  \
+"</tr>\n"                                                                \
+"</table>\n"                                                             \
+"</form>\n"                                                              \
+"</div>\n"                                                               \
+"<div id='wikidata'>\n"
 
 #define PAGEHEADER                                                       \
                                                                          \
@@ -35,7 +52,7 @@
 "<a href='Index' title='List all pages in the wiki. [alt-i]' accesskey='i' >Index</a> | \n"  \
 "<a href='Changes' title='List recent changes in the wiki. [alt-r]' accesskey='r' >Changes</a> | \n"                                    \
 "<a href='Create' title='Create a new wiki page by title. [alt-c]' accesskey='c'>New</a> | \n"                                         \
-"<a href='WikiHelp' title='Get help on wiki usage and formatting.'>Help</a> |\n"                                       \
+"<a href='WikiHelp' title='Get help on wiki usage and formatting.'>Help</a>  \n"                                       \
 "<input type='text' name='expr' size='15' title='Enter text to search for and press return.' /> </td>\n"                               \
 "</tr>\n"                                                                \
 "</table>\n"                                                             \

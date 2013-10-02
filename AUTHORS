@@ -17,5 +17,14 @@ Contributors:
 		adding patches from Peter Korsgaard, Kanru Chen
 		and from debian-0.5-5 patch. Fixed up, refactored
 		and re-diffed the above to all work together.
+		Added later fixes and features patches from debian
+		and then started fixing remaining issues.
 	
-
+Debian maintainers and/or patch authors:
+	Ignace Mouzannar <mouzannar@gmail.com>
+	Mauro Lizaur <mauro@cacavoladora.org>
+	Peter Eisentraut <petere@debian.org>
+	Hanna Wallach <hmw26@cam.ac.uk>
+	Carlo Mandelli <camandel@gmail.com>
+	Alexey Khudyakov <alexey.skladnoy@gmail.com>
+	Neil Stockbridge <neil@dist.ro>

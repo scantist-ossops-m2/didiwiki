@@ -156,7 +156,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = src 
-EXTRA_DIST = TODO
+EXTRA_DIST = TODO didiwiki.1 styles.css didiwiki-16.png didiwiki.png didiwiki.conf
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

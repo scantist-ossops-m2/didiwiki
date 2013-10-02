@@ -1,12 +1,54 @@
+2009-09-30  Gilbert Ashley <amigo@ibiblio.org>
+
+	* src/wiki.c
+	* src/wikitext.h
+	  Fixed edit/delete functionality so that the links point to the
+	  current page and not always the main WikiHome. This meant separating
+	  EDITHEADER and PAGEHEADER into two independent headers.
+	* Added a man-page -taken from debian and slightly altered
+	* Added styles.css page -also taken from debian
+	* Added logo and toolbar png images taken from didiwiki website
+	* Added example didiwiki.conf
+	* Added didiwiki.1, styles.css, didiwiki-16.png, didiwiki.png,
+	  didiwiki.conf and didiwiki.html to top-level Makefile.am
+	* Added notes about changes applied from debian patches to the
+	  previous ChangeLog entry.
+	* Made small changes to the README file.
+	* Added names of all contributors to AUTHORS
+	* Added comments to the NEWS file.
+	* Edited the didiwiki.html file to remove out-dated information.
+	* configure.ac updated version to 0.8
+	* ran 'autoreconf -i' to generate new configuration files
+	* Repackaged as didiwki-0.8.tar.bz2
+	
 2009-09-29  Gilbert Ashley <amigo@ibiblio.org>
 
 	* Based on didiwiki-0.6-svn sources:
 	* Applied fixup patches from Peter Korsgaard <jacmet@sunsite.dk>:
 	  autogen-fixup, cleanup-svn, fix-rss-changes
+	* Applied fixup and feature patch from debian didiwiki-0.5-5
+	  - add command-line options for debugging, for setting 'wikihome'
+	    and for setting the port to use.
+	  - Spelling fixes.
 	* Applied feature patches from Peter Korsgaard <jacmet@sunsite.dk>:
 	  edit-preview-cancel, delete-page
 	* Applied feature patch from  Kanru Chen  <Jabber: kanru@jabber.org>:
 	  page-index support
+	* Applied fixes debian patches from didiwiki-0.5-8
+	  - Fix unicode chars on page names (Alexey Khudyakov <alexey.skladnoy@gmail.com>)
+	  - Remove the double newlines in preformatted text (Neil Stockbridge <neil@dist.ro>)
+	  - Spelling fixes
+	  - Add access log using syslog (Carlo Mandelli <camandel@gmail.com>)
+	  - Implementation of the -l|--listen option that lets you bind to a 
+	    address other than the default "0.0.0.0" (Carlo Mandelli <camandel@gmail.com>)
+	  - Usage() function implementation (Ignace Mouzannar <mouzannar@gmail.com>)
+	  - Implementation of a SIGINT handler in order to stop didiwiki cleanly (Ignace Mouzannar <mouzannar@gmail.com>)
+	  - Some minor fixes were written or applied by these debian didiwiki package maintainers:
+	    Carlo Mandelli <camandel@gmail.com>
+		Ignace Mouzannar <mouzannar@gmail.com>
+		Mauro Lizaur <mauro@cacavoladora.org>
+		Peter Eisentraut <petere@debian.org>
+		Hanna Wallach <hmw26@cam.ac.uk>
 	* re-factored and re-diffed the above with necessary changes
 	* removed website and svn files from sources
 	* configure.ac:

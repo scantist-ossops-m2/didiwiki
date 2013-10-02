@@ -1,15 +1,15 @@
-DidiWiki 0.5
+DidiWiki README
 ==============
 
 DidiWiki is a small and simple WikiWikiWeb implementation written in
-C. Its intended for personal use for notes, Todo's etc. It includes its
-own webserver and hopefully its as simple as just compiling, running
+C. It's intended for personal use for notes, Todo lists, etc. It includes
+its' own webserver and hopefully its as simple as just compiling, running
 and pointing your browser at it. 
 
 Installation
 ============
 
-To build do the usage ./configure and make. You can then make install or
+To build do the usual './configure && make'. You can then 'make install' or
 run DidiWiki right from the src dir. On startup it'll tell you the address
 to point your browser at. You should then be ready to go. 
 
@@ -21,8 +21,8 @@ the help file.
 Remote API
 ==========
 
-As from 0.5 DidiWiki has a very simple 'REST' like http api. Hopefully
-this will make it possible to write alternate front ends to didiwiki.
+Starting with version 0.5 DidiWiki has a very simple 'REST' like http api.
+Hopefully this will make it possible to write alternate front ends to didiwiki.
 
 The api looks like this with parameter passable via GET or POST;
 

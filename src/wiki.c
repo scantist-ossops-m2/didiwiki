@@ -897,8 +897,10 @@ wiki_show_header(HttpResponse *res, char *page_title, int want_edit)
 		       "<body>\n", page_title
 		       );
 
-  http_response_printf(res, PAGEHEADER, page_title,
-		       (want_edit) ? EDITHEADER : "" );
+  if (want_edit)
+	  http_response_printf(res, EDITHEADER, page_title, page_title, page_title);
+  else
+	  http_response_printf(res, PAGEHEADER, page_title, "" );
 }
 
 void
@@ -1119,7 +1121,7 @@ wiki_handle_http_request(HttpRequest *req)
 		  if (http_request_param_get(req, "confirm"))
 		  {
 			  unlink(page);
-			  wiki_redirect(res, "/");
+			  wiki_redirect(res, "WikiHome");
 		  }
 		  else if (http_request_param_get(req, "cancel"))
 		  {
