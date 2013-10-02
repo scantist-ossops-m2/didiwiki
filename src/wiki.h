@@ -22,7 +22,7 @@ void
 wiki_print_data_as_html(HttpResponse *res, char *raw_page_data);
 
 int
-wiki_init(void);
+wiki_init(char *didiwiki_home);
 
 
 #endif

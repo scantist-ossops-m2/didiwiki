@@ -451,7 +451,7 @@ http_response_send(HttpResponse *res)
 ** Implement an HTTP server daemon.
 */
 HttpRequest*
-http_server(int iPort)
+http_server(unsigned int address, int iPort)
 {
   int                listener;      /* The server socket */
   int                connection;    /* A socket for each connection */
@@ -467,7 +467,7 @@ http_server(int iPort)
 
   memset(&inaddr, 0, sizeof(inaddr));
   inaddr.sin_family = AF_INET;
-  inaddr.sin_addr.s_addr = INADDR_ANY;
+  inaddr.sin_addr.s_addr = htonl(address);
   inaddr.sin_port = htons(iPort);
   listener = socket(AF_INET, SOCK_STREAM, 0);
 

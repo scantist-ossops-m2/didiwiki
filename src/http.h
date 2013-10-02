@@ -6,7 +6,7 @@ typedef struct HttpRequest      HttpRequest;
 typedef struct HttpRequestParam HttpRequestParam;
 
 HttpRequest*
-http_server(int iPort);
+http_server(unsigned int address, int iPort);
 
 HttpRequest*
 http_request_new(void);
