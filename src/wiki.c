@@ -594,6 +594,26 @@ wiki_show_page(HttpResponse *res, char *wikitext, char *page)
 }
 
 void
+wiki_show_pic(HttpResponse *res, char *wikitext, char *page)
+{
+  printf("HTTP/1.0 200 OK\r\n");
+  printf("Content-Type: image/jpeg\r\n\r\n");
+  FILE * fi;
+  fi=fopen(page, "r");
+  char buf[4096];
+  int readed = 1;
+  while (readed > 0) {
+  	readed = fread(buf,1,4096,fi);
+  	if(0>fwrite(buf,1,readed,stdout)) {
+		break;
+	}
+  }
+  fclose(fi);
+  fflush(stdout);
+  exit(0);
+}
+
+void
 wiki_show_edit_page(HttpResponse *res, char *wikitext, char *page,
 		    int preview)
 {
@@ -1068,7 +1088,7 @@ wiki_handle_http_request(HttpRequest *req)
   /* A little safety. issue a malformed request for any paths,
    * There shouldn't need to be any..
    */
-  if (strchr(page, '/'))
+  if (strstr(page, "..") || page[0]=='/')
     {
       http_response_set_status(res, 404, "Not Found");
       http_response_printf(res, "<html><body>404 Not Found</body></html>\n");
@@ -1159,7 +1179,17 @@ wiki_handle_http_request(HttpRequest *req)
 	  {
 		  if (wikitext)
 		  {
-			  wiki_show_page(res, wikitext, page);
+		  	int len = strlen(page);
+		        if (!strncmp(page+len-4, ".gif", 4) 
+			 || !strncmp(page+len-4, ".png", 4)
+                         || !strncmp(page+len-4, ".jpg", 4)
+			 || !strncmp(page+len-5, ".jpeg", 5))
+			{
+			  	wiki_show_pic(res, wikitext, page);
+			} else {
+				wiki_show_page(res, wikitext, page);
+			  
+			}
 		  }
 		  else
 		  {
