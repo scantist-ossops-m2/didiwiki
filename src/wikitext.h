@@ -1,7 +1,7 @@
 /* 
- *  DidiWiki - a small lightweight wiki engine. 
- *
- *  Copyright 2004 Matthew Allum <mallum@o-hand.com>
+ *  CiWiki a fork of DidiWiki, a small lightweight wiki engine. 
+ *  CiWiki Copyright 2010 Jean-Pierre Redonnet <inphilly@gmail.com>
+ *  DidiWiki Copyright 2004 Matthew Allum <mallum@o-hand.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,6 +17,28 @@
 #ifndef _HAVE_WIKI_TEXT_HEADER
 #define _HAVE_WIKI_TEXT_HEADER
 
+#define EDITHEADER                                                       \
+                                                                         \
+"<div id='header'>\n"                                                    \
+"<form method='get' action='Search'>\n"                                 \
+"<table border='0' width='100%%'>\n"                                      \
+"<tr>\n"                                                                 \
+"<td align='left' ><strong>%s</strong>" \
+" ( <a href=%s?edit title='Edit this wiki page contents. [alt-j]' accesskey='j'>Edit</a> | " \
+"<a href=%s?delete title='Delete page. [alt-d]' accesskey='d'>Delete</a> ) </td>" \
+"<td align='right' >\n"                                    \
+"<a href='Login' title='Login page. [alt-l]' accesskey='l'>%s</a> |\n"  \
+"<a href='WikiHome' title='Visit Wiki home page. [alt-z]' accesskey='z'>Home</a> |\n"  \
+"<a href='Index' title='List all pages in the wiki. [alt-i]' accesskey='i' >Index</a> | \n"  \
+"<a href='Changes' title='List recent changes in the wiki. [alt-r]' accesskey='r' >Changes</a> | \n"  \
+"<a href='Create' title='Create a new wiki page by title. [alt-c]' accesskey='c'>New</a> | \n"    \
+"<a href='WikiHelp' title='Get help on wiki usage and formatting.'>Help</a>  \n"    \
+"<input type='text' name='expr' size='15' title='Enter text to search for and press return.' /> </td>\n"  \
+"</tr>\n"                                                                \
+"</table>\n"                                                             \
+"</form>\n"                                                              \
+"</div>\n"                                                               \
+"<div id='wikidata'>\n"
 
 #define PAGEHEADER                                                       \
                                                                          \
@@ -27,9 +49,10 @@
 "<td align='left' ><strong>%s</strong> %s</td>\n"         \
 "<td align='right' >\n"                                    \
 "<a href='WikiHome' title='Visit Wiki home page. [alt-z]' accesskey='z'>Home</a> |\n"  \
+"<a href='Index' title='List all pages in the wiki. [alt-i]' accesskey='i' >Index</a> | \n"  \
 "<a href='Changes' title='List recent changes in the wiki. [alt-r]' accesskey='r' >Changes</a> | \n"                                    \
 "<a href='Create' title='Create a new wiki page by title. [alt-c]' accesskey='c'>New</a> | \n"                                         \
-"<a href='WikiHelp' title='Get help on wiki usage and formatting.'>Help</a> |\n"                                       \
+"<a href='WikiHelp' title='Get help on wiki usage and formatting.'>Help</a>  \n"                                       \
 "<input type='text' name='expr' size='15' title='Enter text to search for and press return.' /> </td>\n"                               \
 "</tr>\n"                                                                \
 "</table>\n"                                                             \
@@ -40,7 +63,114 @@
 
 #define PAGEFOOTER                                                       \
                                                                          \
-"</div><div id='footer'>DidiWiki, Version: " VERSION "</div>\n"
+"</div><div id='footer'>CiWiki alias DidiWiki, Version: " VERSION "</div>\n"
+
+
+#define SHORTHELP                                                    \
+                                                                         \
+"<div id='header'>\n"                                                    \
+"<table border='0' width='100%%'>\n"                                      \
+"<tr>\n"                                                                 \
+"<td align='left' > =H1 ==H2 ===H3 | +bold+ | /italic/ | _underscore_ | -strikethrough- | +highlight+ | 'quote | "\
+"[link] | * list | ** sublist | # ordered | ---- | {{toc}} | {{private}}</td>\n"\
+"</tr>\n"                                                           \
+"</table>\n"                                                             \
+"</div>\n"                                                               \
+"<div id='wikidata'>\n"
+
+
+#define LOGINFORM                                                       \
+                                                                        \
+"<h1>Login</h1>"                                                        \
+"<p><a href='NewAccount'>New user? Please create a new account.</a></p>\n" \
+"<form method=POST action='Login'>\n"                                  \
+"<table border='0' width='100%%'>\n"                                      \
+"<tr>\n"                                                                 \
+"<td align='right'>User name:</td>"                                      \
+"<td align='left'><input type='text' name='username' /></td>\n"         \
+"</tr><tr>\n"                                                           \
+"<td align='right'>Password:</td>"                                       \
+"<td align='left'><input type='text' name='password' /></td>\n"        \
+"</tr><tr>\n"                                                           \
+"<td></td><td align='left'><input type='submit' value='Login' /></td>\n" \
+"</tr></table>\n"                                                      \
+"</form>\n" 
+
+#define NEWLOGINFORM                                                       \
+                                                                        \
+"<h1>Create a new Account</h1>"                                         \
+"<p>Please choose your user name, your password and enter a valid email address.<br>" \
+"You will receive your validation code on your email</p>\n" \
+"<form method=POST action='Login'>\n"                                  \
+"<table border='0' width='100%%'>\n"                                      \
+"<tr>\n" \
+"<td align='right'>User name:</td>"                                      \
+"<td align='left'><input type='text' name='username' /></td>\n"         \
+"</tr><tr>\n"                                                           \
+"<td align='right'>Password:</td>"                                       \
+"<td align='left'><input type='text' name='password' /></td>\n"        \
+"</tr><tr>\n"                                                           \
+"<td align='right'>Your Email:</td>"                                     \
+"<td align='left'><input type='text' name='email' /></td>\n"  \
+"</tr><tr>\n"                                                           \
+"<td align='left' colspan=2><br>A validation code will be returned by mail.<br><br></td>\n"     \
+"</tr><tr>\n"                                                           \
+"<td align='right'>Validation Code:</td>"                                \
+"<td align='left'><input type='text' name='code' /></td>\n" \
+"</tr><tr>\n"                                                           \
+"</tr><tr>\n"                                                           \
+"<td></td><td align='left'><input type='submit' value='Process it' /></td>\n" \
+"</tr></table>\n"                                                      \
+"<input type='hidden' name='newaccount' value='on' />  \n"              \
+"</form>\n" 
+
+
+#define CHGPWDFORM                                                      \
+                                                                        \
+"<form method=POST action='Login'>\n"                                   \
+"<table border='0' width='100%%'>\n"                                    \
+"<tr>\n"                                                                \
+"<td align='right'>Old password:</td>"                                  \
+"<td align='left'><input type='text' name='password' /></td>\n"         \
+"</tr><tr>\n"                                                           \
+"<td align='right'>New password:</td>"                                  \
+"<td align='left'><input type='text' name='newpassword' /></td>\n"      \
+"</tr><tr>\n"                                                           \
+"<td align='right'>Reenter your password:</td>"                         \
+"<td align='left'><input type='text' name='newpasswordbis' /></td>\n"   \
+"</tr><tr>\n"                                                           \
+"</tr><tr>\n"                                                           \
+"<td></td><td align='left'><input type='submit' value='Login' /></td>\n"\
+"</tr></table>\n"                                                       \
+"</form>\n" 
+
+
+#define LOGINFO                                                         \
+                                                                        \
+"<h1>Login Information</h1>"                                            \
+"<form method=POST action='Login'>\n"                                  \
+"<table border='0' width='100%%'>\n"                                    \
+"<tr>\n"                                                                \
+"<td align='right'>IP Address:</td><td>%s</td>"                         \
+"</tr><tr>\n"                                                           \
+"<td align='right'>Login name:</td><td>%s</td>"                         \
+"</tr><tr>\n"                                                           \
+"<td></td><td align='left'><input type='submit' name='logoff' value='Log Off' /></td>\n"\
+"</tr><td span=2><br>Change your password:<br></td><tr>\n"             \
+"<td align='right'>Old password:</td>"                                  \
+"<td align='left'><input type='text' name='password' /></td>\n"         \
+"</tr><tr>\n"                                                           \
+"<td align='right'>New password:</td>"                                  \
+"<td align='left'><input type='text' name='newpassword' /></td>\n"      \
+"</tr><tr>\n"                                                           \
+"<td align='right'>Reenter your password:</td>"                         \
+"<td align='left'><input type='text' name='newpasswordbis' /></td>\n"   \
+"</tr><tr>\n"                                                           \
+"<td></td><td align='left'><input type='submit' name='chgpwd' value='Change Password' /></td>\n"\
+"</tr><tr>\n"                                                           \
+"</tr><td span=2><br><a href='javascript:javascript:history.go(-1)'>Return to the previous page.</a></td><tr>\n"             \
+"</tr></table>\n"                                                      \
+"</form>\n" 
 
 
 #define CREATEFORM                                                       \
@@ -53,9 +183,11 @@
 
 #define EDITFORM                                                         \
                                                                          \
-"<form method=POST action='%s' name='editform'>\n"                        \
+"<form method=POST action='%s?edit' name='editform'>\n"                        \
 "<textarea name='wikitext' rows='20' cols='80' wrap='virtual'>%s</textarea>\n" \
-"<p><input type='submit' value='Save' title='[alt-k]' accesskey='k'></p>\n"                            \
+"<p><input type='submit' name='save' value='Save' title='[alt-k]' accesskey='k'>" \
+"<input type='submit' name='preview' value='Preview' title='[alt-p]' accesskey='p'>" \
+"<input type='submit' name='cancel' value='Cancel' title='[alt-c]' accesskey='c'></p>\n"                            \
 "</form>\n"             \
 "<script language='JavaScript'>\n"   \
 "<!--\n"                             \
@@ -66,17 +198,31 @@
 "</script>\n"
 
 
+#define EDITPREVIEW                                                      \
+                                                                         \
+"<div id=\"header\"><strong>Preview:</strong></div>\n"
+
+
+#define DELETEFORM                                                       \
+                                                                         \
+"<form method=POST action='%s?delete' name='deleteform'>\n"              \
+"Are you really sure you want to delete the page <strong>%s</strong>?\n" \
+"<p><input type='submit' name='confirm' Value='OK'>\n"                   \
+"<input type='submit' name='cancel' value='Cancel'></form>"
+
+
 #define HOMETEXT ""                                                      \
                                                                          \
-"==Welcome to !DidiWiki\n"                                               \
-"/!DidiWiki / is a small and simple [http://en.wikipedia.org/wiki/Wiki WikiWikiWeb]\n" \
-"Implementaion. Its intended for personal note taking, Todo lists and any other uses you can think of.\n"                               \
-"\n"                                                                        \
-"To learn more about what a [http://www.c2.com/cgi/wiki?WikiWikiWeb WikiWikiWeb] is, read about [http://www.c2.com/cgi/wiki?WhyWikiWorks WhyWikiWorks] and the [http://www.c2.com/cgi/wiki?WikiNature WikiNature]. Also, consult the [http://www.c2.com/cgi/wiki?WikiWikiWebFaq WikiWikiWebFaq].\n"                      \
-"\n"                                                                        \
-"For an example how a !WikiWiki entry looks in text form you can [?edit edit] this page. Also see WikiHelp for infomation on usage and formatting rules. Use The WikiSandbox to experiment.\n" \
-"\n"                                                                        \
-"/!DidiWiki / is written by [mailto://mallum@o-hand.com Matthew Allum] in C and is free software, released under the [http://www.gnu.org GNU] [http://www.gnu.org/copyleft/gpl.html GPL]. It uses a formatting style similar to that of [http://www.kwiki.org kwiki] and some webserver code from [http://www.cvstrac.org cvstrac]\n"
+"[images/ciwiki.png]\n\n"                                                 \
+"==Welcome to !CiWiki alias !DidiWiki\n"                                 \
+"/!CiWiki / is a fork of /!DidiWiki / with several new features added.\n" \
+"CiWiki is a small and simple [http://en.wikipedia.org/wiki/Wiki WikiWikiWeb] implementation\n" \
+"Ideal for personal note-taking, \"to do\" lists, and any other uses you can think of.\n" \
+"CiWiki is fast and does not require webserver, database mng and php interpreter.\n\n\n"  \
+"For an example of how a !CiWiki entry looks in text form you can [?edit edit] this page. Also see WikiHelp for infomation on usage and formatting rules. Use The WikiSandbox to experiment.\n" \
+"The zipped homepage is here: [files/index.zip]\n\n"                      \
+"/!CiWiki / is written by [mailto://inphilly@gmail.com Jean-Pierre Redonnet] and released under [http://www.gnu.org GNU] [http://www.gnu.org/copyleft/gpl.html GPL]. \n" \
+"Matthew Allum is the original author of /!DidiWiki (2004) \n"
 
 
 #define HELPTEXT ""                                                      \
@@ -84,7 +230,9 @@
 "=Quick Guide \n"                                                    \
 "Top toolbar usage\n"                                                    \
 "* [?edit Edit] Allows you to edit pages ( see below for rules )\n"       \
+"* [?delete Delete] Allows you to delete pages\n"                        \
 "* [WikiHome Home] Takes you to the wiki front page\n"                \
+"* [Index Index] List all the pages in the wiki\n"                \
 "* [Changes Changes] Lists the pages changed by date\n"                  \
 "* [Create New] Creates a new wiki page by title\n"                      \
 "* [WikiHelp Help] Takes you to this help page\n"                            \
@@ -108,7 +256,7 @@
 " ---- Horizonal line\n"                                                 \
 "----\n"                                                                 \
 "\n"                                                                     \
-"Paragraphs are seperated by an empty line\n"                            \
+"Paragraphs are separated by an empty line\n"                            \
 "\n"                                                                     \
 "Like this. Another paragraph.\n"                                        \
 "\n"                                                                     \
@@ -122,6 +270,20 @@
 "  /*Combination of bold and italics*/\n"                                \
 "----\n"                                                                 \
 "\n"                                                                     \
+"{B}Text color{B}\n"                                                     \
+" {B}Text color{B}\n"                                                    \
+"(Y)Background color(Y)\n"                                               \
+" (Y)Background color(Y)\n"                                             \
+"\n"                                                                    \
+"Colors: {B}B blue{B}  {C}C cyan{C}  {G}G green{G}  {P}P pink{P}  {R}R red{R}  {Y}Y yellow{Y}\n" \
+"\n"                                                                    \
+"Colors: (B)B blue(B)  (C)C cyan(C)  (G)G green(G)  (P)P pink(P)  (R)R red(R)  (Y)Y yellow(Y)\n" \
+"----\n"                                                                 \
+"\n"                                                                  \
+"+Highlight+\n"                                                       \
+" +Highlight+\n"                                                      \
+"-----\n"                                                              \
+"\n"                                                                   \
 "WikiLinks are formed by two or more words in /camelcase/.\n"           \
 " WikiLinks are formed by two or more words in /camelcase/.\n"          \
 "External links begin with http://, like http://www.freepan.org\n"       \
@@ -134,13 +296,30 @@
 " Sometimes !WordsShouldNotMakeAWikiLink so put a '! ' beforehand.\n"     \
 "Same thing with !http://foobar.com\n"                                   \
 " Same thing with !http://foobar.com\n"                                  \
+"Open external links in new tags:\n"                                     \
+" {{wwwlink=new_tag}} opens external link in a new tag\n"                \
+" {{wwwlink=current_tag}} opens external link in a current tag\n"        \
 "----\n"                                                                 \
 "\n"                                                                     \
 "Links to images display the image:\n"                                   \
 "\n"                                                                     \
+" Pictures size and border: {{width=100 height=50 border=2}}\n"          \
+" Return to the default width, height and border: {{picture=default}}\n"  \
+"\n"                                                                     \
+"{{width=100 height=50 border=1}}\n"                                     \
 "http://www.google.com/images/logo.gif\n"                                \
 " http://www.google.com/images/logo.gif\n"                               \
+"Picture http links have picture with an !http:// link inside, like [http://www.google.com/images/logo.gif http://www.google.com]\n" \
+" Picture http links have picture with an !http:// link inside, like [http://www.google.com/images/logo.gif http://www.google.com]\n" \
 "----\n"                                                                 \
+"\n"                                                                     \
+" Video youtube, videomotion, veoh, vimeo, flash... embedded:\n"         \
+" youtube=http://www.youtube.com/v/---adress--- \n"                       \
+" dailymotion=http://www.dailymotion.com/swf/---adress--- \n"             \
+" vimeo=http://..... veoh=http://..... flash=http://.....\n"             \
+" line starts with youtube... and terminate the adress with a space\n"   \
+"----\n"                                                                 \
+"\n"                                                                     \
 "Unordered lists begin with a '* '. The number of asterisks determines the level:\n" \
 "* foo\n"                                                                \
 "* bar\n"                                                                \
@@ -163,13 +342,76 @@
 " | row:1,col:1 | row:1,col:2\n"                                         \
 " | row:2,col:1 | row:2,col:2\n"                                         \
 "---\n"                                                                  \
+"Quotation begins with ' \n"                                             \
+"\n"                                                                     \
+" 'I had a monumental idea this morning, but I didn't like it\n"         \
+"'I had a monumental idea this morning, but I didn't like it\n"          \
+"----\n"                                                                 \
+"Expand text\n"                                                          \
+"\n"                                                                     \
+" {{expand}}  or  {{expand=your label here}}\n"                          \
+" text, links, images\n"                                                 \
+" {{-expand}}\n"                                                         \
+"\n"                                                                     \
+"{{expand}}\n"                                                           \
+"text, links: http://www.google.com\n"                                  \
+"{{-expand}}\n"                                                         \
+"\nImbricated\n"                                                        \
+" {{expand}}\n"                                                         \
+" Some text\n"                                                          \
+" {{expand}}\n"                                                         \
+" More text\n"                                                           \
+" {{-expand}}\n"                                                         \
+" {{-expand}}\n"                                                         \
+"{{expand}}\n"                                                         \
+"Some text\n"                                                          \
+"{{expand}}\n"                                                         \
+"More text\n"                                                           \
+"{{-expand}}\n"                                                         \
+"{{-expand}}\n"                                                         \
+"----\n"                                                                 \
+"Collapse text, can be imbricated too.\n"                                    \
+"\n"                                                                     \
+" {{collapse}}  or  {{collapse=your label here}}\n"                       \
+" text, links, images\n"                                                 \
+" {{-collapse}}\n"                                                        \
+"\n"                                                                     \
+"{{collapse}}\n"                                                          \
+"text, links: http://www.google.com\n"                                  \
+"{{-collapse}}\n"                                                        \
+"----\n"                                                                 \
+"Install:\n"                                                             \
+"The file styles.css must be copied in ./didiwiki or in the home directory of didiwiki.\n"\
+"----\n"                                                                 \
+"Simple form: ToDo list\n"                                               \
+" {{entry}} or {{entry tiny/small/medium/large/huge date}}\n"            \
+" !{{data}}   (remove ! before this tag)\n"                              \
+" Entries are added in the page after the tag data\n"                    \
+" {{delete}} deletes the selected field\n"                               \
+" {{save}} saves the checked fields\n"                                   \
+"{{entry}}\n"                                                            \
+"{{data}}\n"                                                            \
+"{{delete}}{{save}}\n"                                                  \
+"----\n"                                                                 \
+" Table of contents {{toc}} can be between collapse or expand\n"           \
+"{{collapse=Table of contents}}{{toc}}{{-collapse}}\n"                   \
+"----\n"                                                                 \
 "<Inline> <html> <is> <escaped>.\n"                                      \
 "\n"                                                                     \
 "----\n"                                                                 \
 "Lines prefixed with a space are unformatted ( Like examples on this page )\n" \
 "\n"                                                                     \
 "----\n"                                                                 \
-
+" There is a `keyword` in this line.\n"                                  \
+"There is a `keyword` in this line.\n"                                   \
+"\n"                                                                     \
+"----\n"                                                                 \
+" Define a private zone in the page with {{private}}\n"                \
+" Login is required to show after this tag\n"                            \
+"{{private}}\n"                                                        \
+" This text is hidded if you are not logged!\n"                \
+"\n"                                                                     \
+"----\n"                                                                 \
 
 #define STYLESHEET                                                       \
                                                                          \

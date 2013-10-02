@@ -16,5 +16,6 @@ util_extract_token(char *input, char **leftOver);
 char *
 util_htmlize(const char *in, int n);
 
-
+char * 
+util_httpize(const char* url);
 #endif

@@ -1,5 +1,5 @@
 /* 
- *  DidiWiki - a small lightweight wiki engine. 
+ *  CiWiki a fork of DidiWiki, the small lightweight wiki engine. 
  *
  *  Parts of this http and util code based on cvstrac sources. 
  *  See http://www.cvstrac.org
@@ -22,9 +22,10 @@ util_mprintf(const char *format, ...)
 {
   va_list ap;
   char   *buf = NULL;
+  int     lg;//not used
 
   va_start(ap,format);
-  vasprintf(&buf, format, ap);
+  lg = vasprintf(&buf, format, ap);
   va_end(ap);
 
   return buf;
@@ -189,3 +190,47 @@ util_htmlize(const char *in, int n)
   out[i] = 0;
   return out;
 }
+
+
+int validURIchar(char c)
+{
+    return 
+        (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+        c == '.' || c == '-' || c == '_' || c == '~' || c == '?';
+    /* question mark isn't allowed character, but I'm not going
+       to encode it */
+}
+
+/*
+ * Encodes character which aren't allowed in URIs
+ * like %D0
+ */
+char urienc[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+char * util_httpize(const char* url)
+{
+    /* Find length of result string */
+    int i;
+    int len = 0;
+    for(i = 0; url[i]; ++i) {
+        if( validURIchar(url[i]) )
+            len++;
+        else 
+            len += 3;
+    }
+    char * out = malloc(sizeof(char)*(len + 1));
+    if( out == 0 ) return 0;
+    
+    out[len]=0;
+    int j = 0;
+    for( i = 0; url[i]; ++i ) {
+        if( validURIchar(url[i]) )
+            out[j++] = url[i];
+        else {
+            out[j++] = '%';
+            out[j++] = urienc[ (url[i]&0xF0) >> 4 ];
+            out[j++] = urienc[ url[i]&0x0F ];
+        }
+    }
+    return out;
+}
+

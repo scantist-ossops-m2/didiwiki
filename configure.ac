@@ -1,7 +1,7 @@
 AC_PREREQ(2.59)
-AC_INIT(didiwiki, 0.6-cvs, [mallum@handhelds.org])
+AC_INIT(didiwiki, 1.7.0, [texlexan@gmail.com])
 AC_CONFIG_SRCDIR([src/util.c])
-AC_CONFIG_HEADER([config.h])
+AM_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE()
 
@@ -42,6 +42,9 @@ src/Makefile
 
 echo
 echo "  NOTE:"
-echo "  If you are upgrading from a earlier version of DidiWiki, delete"
-echo "  \$HOME/.didiwiki/WikiHelp to get updated with the latest version."
+echo "  a) If you are upgrading from a earlier version of DidiWiki, you can "
+echo "  delete \$HOME/.didiwiki/WikiHelp or start didiwiki with option -r"
+echo "  (didiwiki -r ) to get updated with the latest version."
+echo "  b) Run the script finish_install.sh to install the .sh and .css files."
 echo
+xterm -e "./finish_install.sh"

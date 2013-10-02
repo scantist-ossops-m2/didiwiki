@@ -6,13 +6,16 @@ typedef struct HttpRequest      HttpRequest;
 typedef struct HttpRequestParam HttpRequestParam;
 
 HttpRequest*
-http_server(int iPort);
+http_server(struct in_addr address, int iPort);
 
 HttpRequest*
 http_request_new(void);
 
 char*
 http_request_param_get(HttpRequest *req, char *key);
+
+char*
+http_request_checkbox_get(HttpRequest *req);
 
 char*
 http_request_get_uri(HttpRequest *req);
@@ -23,6 +26,8 @@ http_request_get_path_info(HttpRequest *req);
 char*
 http_request_get_query_string(HttpRequest *req);
 
+char*
+http_request_get_ip_src(HttpRequest *req);
 
 HttpResponse*
 http_response_new(HttpRequest *req);
@@ -45,6 +50,14 @@ void
 http_response_set_data(HttpResponse *res, void *data, int data_len);
 
 void
+http_response_send_smallfile
+  (HttpResponse *res, char *filename, char *content, unsigned long sizelimit);
+  
+void
+http_response_send_bigfile
+  (HttpResponse *res, char *filename, char *content);
+
+void
 http_response_append_header(HttpResponse *res, char *header);
 
 void
@@ -53,5 +66,10 @@ http_response_send_headers(HttpResponse *res);
 void
 http_response_send(HttpResponse *res);
 
+void
+sigint(int sig);
+
+void
+sigterm(int sig);
 
 #endif

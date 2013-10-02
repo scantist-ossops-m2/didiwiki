@@ -64,6 +64,7 @@
 #include <assert.h>
 #include <time.h>
 #include <pwd.h>
+#include <grp.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -75,15 +76,25 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <getopt.h>
+#include <syslog.h>
 
 #endif
 
 #define TRUE  1
 #define FALSE 0
 
+#define DISCONNECT 30 //min. change disconnect ip here
+#define SCRIPTMAIL "/scripts/notifynewuser.sh" //path script sendmail
+
+#define PICSFOLDER "images"
+#define FILESFOLDER "files"
+#define ACCESSFOLDER "permission"
 
 #include "util.h"
 #include "http.h"
 #include "wiki.h"
+#include "wikilogin.h"
 
 #endif
+
