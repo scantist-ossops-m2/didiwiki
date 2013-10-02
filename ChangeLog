@@ -1,3 +1,17 @@
+2009-09-29  Gilbert Ashley <amigo@ibiblio.org>
+
+	* Based on didiwiki-0.6-svn sources:
+	* Applied fixup patches from Peter Korsgaard <jacmet@sunsite.dk>:
+	  autogen-fixup, cleanup-svn, fix-rss-changes
+	* Applied feature patches from Peter Korsgaard <jacmet@sunsite.dk>:
+	  edit-preview-cancel, delete-page
+	* Applied feature patch from  Kanru Chen  <Jabber: kanru@jabber.org>:
+	  page-index support
+	* re-factored and re-diffed the above with necessary changes
+	* removed website and svn files from sources
+	* configure.ac:
+	  updated version to 0.7
+
 2004-12-12  mallum,,,  <mallum@openedhand.com>
 
 	* website/index.htm:

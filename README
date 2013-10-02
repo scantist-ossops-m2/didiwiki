@@ -45,7 +45,7 @@ http://didiwiki/api/page/delete?page=XXX
 
 http://didiwiki/api/pages
 
- Returns a seperated list ( one entry per line containing page
+ Returns a separated list ( one entry per line containing page
  title,TAB,modified date) of wiki pages with the most recently modified
  first.
 
